@@ -1,0 +1,30 @@
+# macOS system files
+.DS_Store
+
+# IDE/editor folders
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Environment files (root-level, if any)
+.env
+.env.*
+
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+
+# Node modules in case someone installs in root
+/node_modules
+
+# Build folders (if created accidentally at root)
+dist/
+build/
