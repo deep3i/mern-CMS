@@ -25,6 +25,9 @@ const customerSlice = createSlice({
         builder.addCase(createCustomersAsync.pending, (state) => {
             state.isCustomerLoading = true;
         });
+        builder.addCase(createCustomersAsync.fulfilled, (state) => {
+            state.isCustomerLoading = false;
+        });
         builder.addCase(createCustomersAsync.rejected, (state) => {
             state.isCustomerLoading = false;
             state.customers = [];

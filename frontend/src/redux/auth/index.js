@@ -40,13 +40,12 @@ export const loginExistingUserAsync = createAsyncThunk(
     try {
       const response = await loginExistingUser(params);
       if (response.data) {
-        const { accessToken, success, message, user } = response.data;
-        const role = user?.role;
-        if (success && role !== 'user') {
+        const { accessToken, success, message, user } = response.data;        
+        if (success) {
           notifySuccess(message);
         }
         if (params.callback) {
-          params.callback(success, role);
+          params.callback(success);
         }
         return fulfillWithValue({
           accessToken,
@@ -54,7 +53,8 @@ export const loginExistingUserAsync = createAsyncThunk(
         });
       }
       return fulfillWithValue({
-        data: {}
+        user: {},
+        accessToken: null
       });
     } catch (err) {
       const { message }  = err.response.data;

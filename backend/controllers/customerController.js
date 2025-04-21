@@ -35,25 +35,37 @@ exports.getCustomers = async (req, res) => {
   }
 };
 
-exports.addComment = async (req, res) => {
-  const { customerId, comment } = req.body;
+exports.addComments = async (req, res) => {
+  const commentMap = req.body;
+
   try {
-    const customer = await Customer.findById(customerId);
-    if (!customer) {
-      return res.status(404).json({
-        success: false,
-        message: 'Customer not found',
-      });
+    const customerIds = Object.keys(commentMap);
+
+    for (const customerId of customerIds) {
+      const comment = commentMap[customerId];
+
+      const customer = await Customer.findById(customerId);
+
+      if (!customer) {
+        console.warn(`Customer not found: ${customerId}`);
+        continue;
+      }
+
+      customer.comments.push(comment);
+      await customer.save();
     }
 
-    customer.comments.push(comment);
-    await customer.save();
     res.json({
       success: true,
-      message: 'Comment added successfully',
-      customer,
+      message: 'All comments saved successfully',
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Failed to add comment', error });
+    console.error("Error saving comments:", error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to save comments',
+      error,
+    });
   }
 };
+

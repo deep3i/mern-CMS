@@ -8,9 +8,13 @@ import { notifySuccess, notifyError } from "../../components/common/ToastFunctio
 
 export const createCustomersAsync = createAsyncThunk(
     "customer/createCustomers",
-    async (params, { rejectWithValue, fulfillWithValue }) => {
+    async (params, { rejectWithValue, fulfillWithValue, getState }) => {
         try {
-            const response = await createCustomers(params);
+            const state = getState();
+            const { accessToken } = state.auth;
+            console.log(params, accessToken);
+            
+            const response = await createCustomers(params, accessToken);
             if (response.data) {
                 const { success, message } = response.data;
                 if (success) {
@@ -21,9 +25,7 @@ export const createCustomersAsync = createAsyncThunk(
                 }
                 return fulfillWithValue();
             }
-            return fulfillWithValue({
-                data: {}
-            });
+            return fulfillWithValue();
         } catch (err) {
             const { message } = err.response.data;
             notifyError(message);
@@ -34,9 +36,11 @@ export const createCustomersAsync = createAsyncThunk(
 
 export const createCommentsAsync = createAsyncThunk(
     "customer/createComments",
-    async (params, { rejectWithValue, fulfillWithValue }) => {
+    async (params, { rejectWithValue, fulfillWithValue, getState }) => {
         try {
-            const response = await createComments(params);
+            const state = getState();
+            const { accessToken } = state.auth;
+            const response = await createComments(params, accessToken);
             if (response.data) {
                 const { success, message } = response.data;
                 if (success) {
@@ -60,14 +64,13 @@ export const createCommentsAsync = createAsyncThunk(
 
 export const getCustomersAsync = createAsyncThunk(
     "customer/getCustomers",
-    async (params, { rejectWithValue, fulfillWithValue }) => {
+    async (params, { rejectWithValue, fulfillWithValue, getState }) => {
         try {
-            const response = await getCustomers(params);
+            const state = getState();
+            const { accessToken } = state.auth;
+            const response = await getCustomers(accessToken);
             if (response.data) {
-                const { success, message, customers } = response.data;
-                if (success) {
-                    notifySuccess(message);
-                }
+                const { success, customers } = response.data;
                 if (params.callback) {
                     params.callback(success);
                 }

@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"123456\"\n}\n",
+							"raw": "{\n  \"email\": \"test-1@example.com\",\n  \"password\": \"123456\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -44,7 +44,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"123456\"\n}\n",
+							"raw": "{\n  \"email\": \"test-2@example.com\",\n  \"password\": \"123456\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -153,19 +153,31 @@
 				},
 				{
 					"name": "getCustomers",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MDQ3NWY4ODU5Nzk1Mjk5MjIwZDA4NCIsImlhdCI6MTc0NTEyMjkxNywiZXhwIjoxNzQ1MTIzODE3fQ.wZn2c6MDzMVEgucsSaguA2lhwggDRyAftibwTfzSV34",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MDVhNWVjM2IxOWNhNWNkNmE1ZjMzNCIsImlhdCI6MTc0NTIwMTAxNSwiZXhwIjoxNzQ1MjAxOTE1fQ.3wTM7AqBgfT6QkP6aKFgxB5cM_OZSu_PBbzQCZ8zMBs",
 									"type": "string"
 								}
 							]
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{BASE_URL}}/api/customers?page=1",
 							"host": [
@@ -202,7 +214,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"customerId\": \"680476cd758a4d85852fec8e\",\n  \"comment\": \"This customer ordered 5 items.\"\n}\n",
+							"raw": "{\n  \"680476cd758a4d85852fec8e\": \"This customer ordered 5 items.\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"

@@ -35,7 +35,7 @@ function AppRoutes() {
 function App() {
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate persistor={persistor}>
         <BrowserRouter>
           <AppRoutes />
         </BrowserRouter>

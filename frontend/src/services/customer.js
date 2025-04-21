@@ -10,7 +10,7 @@ export const getCustomers = (token) => {
     return requestInstance.get("customers");
 };
 
-export const createComments = ({ data }, token) => {
+export const createComments = ({ comments }, token) => {
     const requestInstance = backendAPI(token);
-    return requestInstance.post("customers/comment", data);
+    return requestInstance.post("customers/comment", comments);
 };

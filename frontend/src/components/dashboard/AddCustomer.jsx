@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { z } from "zod";
+import { createCustomersAsync } from "../../redux/customer";
 
 const customerSchema = z.object({
     name: z.string().min(2, "Name is required"),
@@ -12,7 +14,8 @@ const customerSchema = z.object({
     company: z.string().min(1, "Company name is required"),
 });
 
-const AddCustomerModal = ({ isOpen, onClose, onSave }) => {
+const AddCustomerModal = ({ isOpen, onClose, handleCall }) => {
+    const dispatch = useDispatch();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -44,7 +47,6 @@ const AddCustomerModal = ({ isOpen, onClose, onSave }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         const validation = customerSchema.safeParse(formData);
         if (!validation.success) {
             const fieldErrors = {};
@@ -54,10 +56,14 @@ const AddCustomerModal = ({ isOpen, onClose, onSave }) => {
             setErrors(fieldErrors);
             return;
         }
-
-        onSave(formData);
-        onClose();
-        setFormData({ name: "", email: "", phone: "", company: "" });
+        dispatch(createCustomersAsync({
+            data: formData,
+            callback: () => {
+                onClose();
+                setFormData({ name: "", email: "", phone: "", company: "" });
+                handleCall();
+            }
+        }));
         setErrors({});
     };
 

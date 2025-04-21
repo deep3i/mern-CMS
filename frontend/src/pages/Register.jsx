@@ -1,7 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { createNewUserAsync } from "../redux/auth";
 
 const Register = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [form, setForm] = useState({ name: "", email: "", password: "" });
 
     const handleChange = (e) => {
@@ -11,6 +15,13 @@ const Register = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Register attempt:", form);
+        dispatch(createNewUserAsync(({
+            data: form,
+            callback: () => {
+                setForm({ name: "", email: "", password: "" });
+                navigate('/login');
+            }
+        })))
     };
 
     return (

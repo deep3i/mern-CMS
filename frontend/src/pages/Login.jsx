@@ -1,7 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { loginExistingUserAsync } from "../redux/auth";
 
 const Login = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [form, setForm] = useState({ email: "", password: "" });
 
     const handleChange = (e) => {
@@ -11,6 +15,13 @@ const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log("Login attempt:", form);
+        dispatch(loginExistingUserAsync({
+            data: form,
+            callback: () => {
+                setForm({ email: '', password: '' });
+                navigate('/dashboard');
+            }
+        }))
     };
 
     return (

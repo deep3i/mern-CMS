@@ -1,14 +1,14 @@
 import { toast } from "react-toastify";
 
-export const notifySuccess = () => {
-  toast.success("Customer created successfully!", {
+export const notifySuccess = (message) => {
+  toast.success(message, {
     position: 'top-right',
     autoClose: 2000,
   });
 };
 
-export const notifyError = () => {
-  toast.error("Something went wrong! Try again.", {
+export const notifyError = (message) => {
+  toast.error(message, {
     position: 'top-right',
     autoClose: 2000,
   });

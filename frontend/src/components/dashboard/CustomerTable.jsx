@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,20 +8,31 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
-import { staticCustomers } from "../../utils/json";
+import { useDispatch } from 'react-redux';
+import { createCommentsAsync } from "../../redux/customer";
 
-const useCustomers = () => {
-  return useQuery({
+function useDebounce(value, delay = 500) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+const CustomerTable = ({ handleOpen, isCustomerLoading, customers, handleCall }) => {
+  const dispatch = useDispatch();
+  const { data } = useQuery({
     queryKey: ["customers"],
     queryFn: async () => {
-      await new Promise((res) => setTimeout(res, 500));
-      return staticCustomers;
+      return customers;
     },
   });
-};
-
-const CustomerTable = ({ handleOpen }) => {
-  const { data, isLoading } = useCustomers();
   const [globalFilter, setGlobalFilter] = useState("");
   const [comments, setComments] = useState({});
   const [showComments, setShowComments] = useState(false);
@@ -35,8 +46,15 @@ const CustomerTable = ({ handleOpen }) => {
       setShowComments(true);
       return;
     }
-
-    const logs = data
+    dispatch(createCommentsAsync({
+      comments,
+      callback: () => {
+        setComments({});
+        setShowComments(false);
+        handleCall();
+      }
+    }))
+    const logs = customers
       .map((cust) => {
         const comment = comments[cust.id];
         return comment?.trim()
@@ -46,7 +64,7 @@ const CustomerTable = ({ handleOpen }) => {
       .filter(Boolean);
 
     if (logs.length === 0) {
-      alert("No comments to log!");
+      console.log("No comments to log!");
     } else {
       console.log("Customer Comments Log:", logs);
     }
@@ -64,25 +82,35 @@ const CustomerTable = ({ handleOpen }) => {
       base.push({
         accessorKey: "comment",
         header: "Comment",
-        cell: ({ row }) => (
-          <input
-            type="text"
-            className="border rounded px-2 py-1 w-full text-sm"
-            value={comments[row.original.id] || ""}
-            onChange={(e) =>
-              handleCommentChange(row.original.id, e.target.value)
+        cell: ({ row }) => {
+          const id = row.original._id;
+          const initial = comments[id] || "";
+          const [inputVal, setInputVal] = useState(initial);
+          const debouncedVal = useDebounce(inputVal, 500);
+          useEffect(() => {
+            if (debouncedVal !== comments[id]) {
+              handleCommentChange(id, debouncedVal);
             }
-            placeholder="Add comment..."
-          />
-        ),
+          }, [debouncedVal]);
+          return (
+            <input
+              type="text"
+              className="border rounded px-2 py-1 w-full text-sm"
+              value={inputVal}
+              onChange={(e) => setInputVal(e.target.value)}
+              placeholder="Add comment..."
+            />
+          );
+        },
       });
     }
+
 
     return base;
   }, [showComments, comments]);
 
   const table = useReactTable({
-    data: data || [],
+    data: customers || [],
     columns,
     state: {
       globalFilter,
@@ -138,7 +166,7 @@ const CustomerTable = ({ handleOpen }) => {
             ))}
           </thead>
           <tbody>
-            {isLoading ? (
+            {isCustomerLoading ? (
               <tr>
                 <td colSpan={columns.length} className="text-center p-4">
                   Loading...
